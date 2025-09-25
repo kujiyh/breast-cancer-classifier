@@ -1,0 +1,22 @@
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.log
+
+.venv/
+env/
+venv/
+
+.ipynb_checkpoints/
+
+# Dataset folder (BreakHis images)
+data/
+
+.vscode/
+
+.DS_Store
+Thumbs.db
+
+*.pt
+*.pth
