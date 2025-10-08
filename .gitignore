@@ -5,6 +5,7 @@
 *.log
 
 .venv/
+breast_cancer_env/
 env/
 venv/
 
