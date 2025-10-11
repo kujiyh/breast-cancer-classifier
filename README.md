@@ -4,6 +4,12 @@ This project is a machine learning model built with PyTorch that classifies brea
 
 The model was trained on the [BreakHis dataset](https://www.kaggle.com/datasets/ambarish/breakhis), which has two classifications: malignant or benign.
 
+To use, clone and run 
+
+```
+pip install -r requirements.txt
+```
+
 Sample training images:
 
 <img width="850" height="290" alt="image" src="https://github.com/user-attachments/assets/fadb0692-31d1-4c96-8ee4-b642cd8d9ce2" />
