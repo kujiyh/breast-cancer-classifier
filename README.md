@@ -14,14 +14,14 @@ changelog:
 
 ---------------------------------------------
 
-**first model** (adam optimizer, batch_size=32):
+**first model:**  
 
 epochs: 5
 train loss: ~0.15  
 test loss: ~0.5  
 issues: overfitting
 
-**second model:** 
+**second model:**  
 
 changes: 
 - added dropout  
