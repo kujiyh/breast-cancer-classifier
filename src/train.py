@@ -5,7 +5,7 @@ from dataset import get_loaders
 from model import CNN
 from tqdm import tqdm
 
-def train(model, dataloader, criterion, optimizer, device):
+def train(model, dataloader, criterion, optimizer, scheduler, device):
     model.train()
     running_loss = 0.0
     correct = 0
@@ -20,6 +20,7 @@ def train(model, dataloader, criterion, optimizer, device):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step() # backpropagation
+        scheduler.step()
 
         running_loss += loss.item() * images.size(0)
         _, predicted = output.max(1) # not too sure what the _, does but i need it i guess
@@ -54,24 +55,29 @@ def eval(model, dataloader, criterion, device):
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    train_loader, test_loader, classes = get_loaders(batch_size=32)
+    train_loader, test_loader, classes = get_loaders(batch_size=64)
 
     model = CNN(num_classes=len(classes)).to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001) # model, loss, Adam optimizer
+    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=0.0003) # Adam optimizer, added weight decay
 
-    print("CUDA available:", torch.cuda.is_available())
-    print("Training on device:", next(model.parameters()).device)
-
-    num_epochs = 5 # start val
+    num_epochs = 30
+    # lr decay
+    scheduler = torch.optim.lr_scheduler.OneCycleLR(
+        optimizer,
+        max_lr=0.0018,
+        epochs=num_epochs,
+        steps_per_epoch=len(train_loader)
+    )   
      
     for epoch in range(num_epochs):
-        train_loss, train_acc = train(model, train_loader, criterion, optimizer, device)
+        train_loss, train_acc = train(model, train_loader, criterion, optimizer, scheduler, device)
         test_loss, test_acc = eval(model, test_loader, criterion, device)
         
         print(f"Epoch {epoch+1}/{num_epochs}")
         print(f"Train Loss: {train_loss:.2f} | Train Acc: {train_acc:.2f}%")
-        print(f"Test  Loss: {test_loss:.2f} | Test  Acc: {test_acc:.2f}%") # monitor progress
+        print(f"Test  Loss: {test_loss:.2f} | Test  Acc: {test_acc:.2f}%")
+        print(f"Learning rate: {optimizer.param_groups[0]['lr']}") # monitor progress
 
     torch.save(model.state_dict(), "cnn_breakhis.pth")
     print("done")
